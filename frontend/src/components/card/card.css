@@ -10,6 +10,18 @@
     justify-content: center;
 }
 
+.delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+}
 
 .card-img{
     width: 100%;

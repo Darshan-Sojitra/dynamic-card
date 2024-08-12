@@ -40,7 +40,7 @@ function App() {
                                       link="link"
                                     />} />
           <Route path="/admin/login" element={<Signup />} />
-          <Route path="/admin/cards" element={<AdminCards cards={cards} />} />
+          <Route path="/admin/cards" element={<AdminCards cards={cards} setCards={setCards} />} />
           <Route path="/admin/createcard" element={<CreateCard  />} />
         </Routes>
       </div>

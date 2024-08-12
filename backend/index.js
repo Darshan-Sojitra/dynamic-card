@@ -136,12 +136,22 @@ app.post('user/login',authenticateJwt,async (req,res)=>{
 })
 
 
-// app.delete('/card/:id',async (req,res)=>{
-//     const cardId = parseInt(req.params.id);
-// //     const cardIndex = card.
-// });
+app.delete('/card/:id',async (req,res)=>{
+    const cardId = req.params.id;
+    try {
+        const deletedCard = await Card.findByIdAndDelete(cardId);
+        if (!deletedCard) {
+            return res.status(404).json({ message: "Card not found" });
+        }
+        res.json({ message: "Card deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting card:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+//     const cardIndex = card.
+});
 
-app.u
+
 app.listen(port, () => {
     console.log(`Listening to port ${port}`);
 });
