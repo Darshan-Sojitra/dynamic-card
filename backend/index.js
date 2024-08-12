@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { createCard, userinput } from './types.js';
-import { Admin, Card } from './db.js';
+import { Admin, Card, User } from './db.js';
 import jwt from 'jsonwebtoken';
 
 const SECRET='SecRET';
@@ -70,12 +70,12 @@ app.post('/admin/login',async(req,res)=>{
     }
 });
 
-app.get('./cards',async(req,res)=>{
+app.get('./cards',authenticateJwt,async(req,res)=>{
     const cards = await Card.find({});
     res.json({cards});
 })
 
-app.post('/newcard', async (req, res) => {
+app.post('/newcard',authenticateJwt, async (req, res) => {
     const payload = req.body;
     const parsedPayload = createCard.safeParse(payload);
     if (!parsedPayload.success) {
@@ -103,6 +103,38 @@ app.get('/cards',async(req,res)=>{
     res.json({cards});
 
 })
+
+
+app.post('/user/signup',async(req,res)=>{
+    const{username,pasword}= req.body;
+    const payload = {username,password};
+    const parsedPayload = userinput.safeParse(payload);
+    if(!parsedPayload.success){
+        res.status(411).json({"message":"Invalid input"});
+        return;
+    }else{
+        const newuser =await new User({username,password});
+        await newuser.save();
+        const token = jwt.sign({username:username, role:'user'},SECRET,{expiresIn:'1h'});
+        res.json({"message":"new user created",token:token});
+
+    }
+})
+
+app.post('user/login',authenticateJwt,async (req,res)=>{
+    const{username,password}=req.body;
+    const payload = {username,password};
+    const parsedPayload = userinput.safeParse(payload);
+    if(!parsedPayload.success){
+        res.status(411).json({message:"Invalid Input"});
+        retutn ;
+    }else{
+        const token = jwt.sign({username:username},SECRET,{expiresIn:'1h'});
+        res.json({message:"User was loged in succesffuly"});
+    }
+
+})
+
 
 // app.delete('/card/:id',async (req,res)=>{
 //     const cardId = parseInt(req.params.id);
